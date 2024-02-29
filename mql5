@@ -1,0 +1,57 @@
+mql5
+//+------------------------------------------------------------------+
+//|                                                          The Legend EA MT5|
+//|                                       https://www.forexroboteasy.com|
+//|                                                Copyright © Forex Robot Easy Team|
+//+------------------------------------------------------------------+
+
+// Import necessary libraries
+#include <Trade\Trade.mqh>
+#include <NNM\NNM.mqh>
+#include <QML\QML.mqh>
+
+// Define variables
+CTrade trade; // Trade object for executing trades
+CNNM nnm; // NNM object for state evaluation
+CQML qml; // QML object for market trend analysis
+
+// Initialize the EA
+int OnInit()
+{
+   trade.SetExpertMagicNumber(123456); // Set the magic number for trades
+   return(INIT_SUCCEEDED);
+}
+
+// Execute trading operations
+void OnTick()
+{
+   // Check for trade signals
+   if(nnm.EvaluateState() && qml.PredictMarketTrend())
+   {
+      // Open a buy trade
+      trade.Buy();
+   }
+   else if(!nnm.EvaluateState() && !qml.PredictMarketTrend())
+   {
+      // Open a sell trade
+      trade.Sell();
+   }
+}
+
+// Handle trade events
+void OnTrade()
+{
+   // Check if a trade has been closed
+   if(trade.IsTradeClosed())
+   {
+      // Print trade result to the journal
+      Print('Trade closed with profit: ', trade.GetProfit());
+   }
+}
+
+// Stop the EA
+void OnDeinit(const int reason)
+{
+   // Print the reason for stopping the EA
+   Print('The Legend EA MT5 stopped due to reason: ', reason);
+}
